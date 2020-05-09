@@ -84,6 +84,7 @@ def solve(board):
         return False
 
 
-print_board("Before:\n"board_np)
+print_board(board_np)
 solve(board_np)
-print_board("Solved:\n"board_np)
+print("\n")
+print_board(board_np)

@@ -27,7 +27,7 @@ board = np.array([
 ])
 ```
 
-Pass the NumPy array to the solve function.
+Pass the NumPy array to the solve function. 
 
 ```
 solve(board)
