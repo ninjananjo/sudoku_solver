@@ -2,16 +2,30 @@ import numpy as np
 
 
 board_np = np.array([
-    [7,8,0,4,0,0,1,2,0],
-    [6,0,0,0,7,5,0,0,9],
-    [0,0,0,6,0,1,0,7,8],
-    [0,0,7,0,4,0,2,6,0],
-    [0,0,1,0,5,0,9,3,0],
-    [9,0,4,0,6,0,0,0,5],
-    [0,7,0,3,0,0,0,1,2],
-    [1,2,0,0,0,7,4,0,0],
-    [0,4,9,2,0,6,0,0,7]
+    [9, 0, 0, 0, 0, 0, 2, 0, 0],
+    [0, 8, 0, 0, 0, 7, 0, 9, 0],
+    [6, 0, 2, 0, 0, 0, 5, 0, 0],
+    [0, 7, 0, 0, 6, 0, 0, 0, 0],
+    [0, 0, 0, 9, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 2, 0, 0, 4, 0],
+    [0, 0, 5, 0, 0, 0, 6, 0, 3],
+    [0, 9, 0, 4, 0, 0, 0, 7, 0],
+    [0, 0, 6, 0, 0, 0, 0, 0, 0]
 ])
+
+"""
+board_np = np.array([
+    [7, 8, 0, 4, 0, 0, 1, 2, 0],
+    [6, 0, 0, 0, 7, 5, 0, 0, 9],
+    [0, 0, 0, 6, 0, 1, 0, 7, 8],
+    [0, 0, 7, 0, 4, 0, 2, 6, 0],
+    [0, 0, 1, 0, 5, 0, 9, 3, 0],
+    [9, 0, 4, 0, 6, 0, 0, 0, 5],
+    [0, 7, 0, 3, 0, 0, 0, 1, 2],
+    [1, 2, 0, 0, 0, 7, 4, 0, 0],
+    [0, 4, 9, 2, 0, 6, 0, 0, 7]
+])
+"""
 
 
 def print_board(board):
@@ -22,7 +36,7 @@ def print_board(board):
         for j in range(9):
             if j == 8:  # no space on last column
                 print(board[i][j])
-            elif(j + 1) % 3 == 0:  # add pipe after every 3rd column
+            elif (j + 1) % 3 == 0:  # add separator after every 3rd column
                 print(board[i][j], '|', end=' ')
             else:  # space separated for all other numbers
                 print(board[i][j], end=' ')
@@ -41,36 +55,35 @@ def valid(board: np.ndarray, num: int, position: tuple) -> bool:
     """Check if the suggested number, 'num' is valid in the specified position on the Sudoku board.
     If valid return True else False"""
     if num in board[position[0], :]:  # check row
-        print(num, 'Row duplication')
         return False
 
     if num in board[:, position[1]]:  # check column
-        print(num, 'Column duplication')
         return False
 
-    mini_sq_row, mini_sq_col = map(lambda x: x//3*3, position)
+    mini_sq_row, mini_sq_col = map(lambda x: x // 3 * 3, position)
     if num in board[mini_sq_row: mini_sq_row + 3, mini_sq_col: mini_sq_col + 3]:  # check 3x3
-        print(num, '3x3 duplication')
         return False
 
     return True
 
 
 def solve(board):
-    """Finds a valid number for an empty cell"""
+    """Function solves the Sudoku board by finding an empty cell and updating with a valid number.
+     The function is recursive and keeps updating the board until it either gets stuck or solves the puzzle.
+     If stuck it backtracks and tried another valid number and then continues."""
     empty_cell = find_empty(board)
-    print(empty_cell)
+    if not empty_cell:  # If board is solved return True
+        return True
+    else:
+        for num in range(1, 10):
+            if valid(board, num, empty_cell):
+                board[empty_cell[0]][empty_cell[1]] = num  # update board with valid number
+                if solve(board):
+                    return True
+                board[empty_cell[0]][empty_cell[1]] = 0
+        return False
 
-    for num in range(1, 10):
-        if valid(board, num, empty_cell):
-            print(num)
-            board[empty_cell[0]][empty_cell[1]] = num
-            break
 
-
-
-print_board(board_np)
+print_board("Before:\n"board_np)
 solve(board_np)
-print_board(board_np)
-#print(find_empty(board_np))
-# print(valid(board_np, 6, (0, 2))
+print_board("Solved:\n"board_np)
